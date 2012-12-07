@@ -12,7 +12,7 @@ var CONSTANTS = {
 	CanvasHeight : 388,
 	CanvasColor : "#DDD",
 	WispStartCoords : {
-		x : (688/2) - 20,
+		x : (688 / 2) - 20,
 		y : 50
 	},
 	FrameRate : 200,
@@ -54,7 +54,12 @@ var CONSTANTS = {
 			JarID : 1
 		}
 	},
-	MaxJarCapacity : 8
+	MaxJarCapacity : 7,
+	Time : {
+		WispSpawnStartS : 1,
+		WispSpawnMaxS : 5,
+		StressClockMaxS : 30
+	}
 }
 
 // StressGame game class
@@ -74,8 +79,8 @@ function StressGame() {
 	// contains all jars
 	var jars = [];
 	var layers = {
-		background: backgroundLayer,
-		interaction: interactionLayer
+		background : backgroundLayer,
+		interaction : interactionLayer
 	};
 	// main init function
 	this.init = function() {
@@ -83,9 +88,13 @@ function StressGame() {
 		stage.add(backgroundLayer);
 		// add moving layer to stage
 		stage.add(interactionLayer);
-		// try generate 1 wisp
 		initializePlayArea();
+		// try generate 1 wisp
 		//this.moreWisps();
+		// start Game!
+	}
+	this.start = function() {
+		generateWisp(interactionLayer, jars);
 	}
 	function initializePlayArea() {
 		// create background area
@@ -117,16 +126,19 @@ function StressGame() {
 	this.allWisps = wisps;
 	// generates a wisp
 	function generateWisp(interactionLayer, jars) {
-		var wisp = new Wisp(interactionLayer, jars);
-		wisp.init(wisp);
-		return wisp;
+		var spawnT = Math.round(Math.random() * CONSTANTS.Time.WispSpawnMaxS);
+		if (spawnT < CONSTANTS.Time.WispSpawnStartS) {
+			spawnT = CONSTANTS.Time.WispSpawnStartS;
+		}
+		console.log(spawnT);
+		setTimeout(function() {
+			var wisp = new Wisp(interactionLayer, jars);
+			wisp.init(wisp);
+			wisps.push(wisp);
+			generateWisp(interactionLayer, jars);
+		}, spawnT * 1000);
 	}
 
-	// add a wisp
-	this.moreWisps = function() {
-		var wisp = generateWisp(interactionLayer, jars);
-		wisps.push(wisp);
-	}
 }
 
 function Jar(settings, layers) {
@@ -195,7 +207,7 @@ function Wisp(interactionLayer, jars) {
 		dragTransition.stop();
 		moveTransition.stop();
 		timerAnimation.stop();
-	}	
+	}
 	this.init = function(s) {
 		var tjar = jars[Math.round(Math.random() * (jars.length - 1))];
 		// randomize destination jarId

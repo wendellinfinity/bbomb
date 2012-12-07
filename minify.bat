@@ -1,0 +1,1 @@
+java -jar %YUICOMP% Scripts/stress.js -o Scripts/stress.min.js
