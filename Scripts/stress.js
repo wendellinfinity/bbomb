@@ -130,7 +130,6 @@ function StressGame() {
 		if (spawnT < CONSTANTS.Time.WispSpawnStartS) {
 			spawnT = CONSTANTS.Time.WispSpawnStartS;
 		}
-		console.log(spawnT);
 		setTimeout(function() {
 			var wisp = new Wisp(interactionLayer, jars);
 			wisp.init(wisp);
@@ -443,3 +442,6 @@ function Wisp(interactionLayer, jars) {
 // initialize the game
 var sg = new StressGame();
 sg.init();
+$("#start").click(function() {
+	sg.start();
+});
